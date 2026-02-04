@@ -34,7 +34,7 @@ class Modulplaner:
         self._max_credits = max_credits_per_semester
         self._catalog: Dict[str, Modul] ={}
         self._plan: Dict[int, Dict[str, Status]] = {} 
-
+        
 
 #Modulkatalog
 def add_modul(self, code: str, credits: int, prerequisites: Optional[Set[str]] = None):
@@ -62,3 +62,32 @@ def plan_modul(self, semester: int, code: str, status: Status = "geplant"):
     if self.semester_credits(semester) > self._max_credits:
         del self._plan[semester][code]
         raise ValueError("Credit-Limit überschritten.")
+
+
+#Credits
+def semester_credits(self, semester: int) -> int:
+    return sum(
+        self._catalog[c].credits
+        for c in self._plan.get(semester, {})
+    )
+
+
+def total_credits(self) -> int: 
+    return sum(self.semester_credits(s) for s in self._plan)
+
+
+#interneLogik 
+def _is_planned(self, code: str) -> bool:
+    return any(code in sem for sem in self._plan.values())
+
+
+def _passed_modules(self) -> Set[str]: 
+    return {
+        c for sem in self._plam.values()
+        for c, status in sem.items()
+        if status == "bestanden"
+    }
+
+
+def _missing_prerequisites(self, code: str) -> Set[str]: 
+    return self._catalog[code].prerequisites - self._passed_modules()
